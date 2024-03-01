@@ -1,13 +1,12 @@
 from django.contrib import admin
 from django.urls import include, path
 from register import views as register_views
-from payapp import views as payapp_views
-urlpatterns = [
-    #path('admin/', <>, name='admin'), #todo: admin panel inside payapp?
-    path('activity/', payapp_views.activity, name='activity'),
-    path('send/', payapp_views.send, name='send'),
-    path('request/', payapp_views.request, name='request'),
+from register import views as register_views
 
-    path('admin-users/', payapp_views.admin_users, name='admin users'),
-    path('admin-activity', payapp_views.admin_activity, name='admin activity'),
+urlpatterns = [
+    path('admin/', admin.site.urls, name='admin'),
+    path('payapp/', include('payapp.urls')),
+    path('register/', register_views.register_user, name='register'),
+    path('login/', register_views.login_user, name='login'),
+    path('logout/', register_views.logout_user, name='logout'),
 ]
