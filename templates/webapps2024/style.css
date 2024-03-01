@@ -1,0 +1,18 @@
+
+.navbar {
+    background: #ff8c1c
+}
+
+body {
+    background: #fff
+}
+
+.button {
+    background: #ff8c1c;
+    color: #fff;
+}
+
+.button .active {
+    background: #bf6812;
+    color: #bbb;
+}
