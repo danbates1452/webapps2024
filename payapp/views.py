@@ -14,13 +14,13 @@ def restricted_area(check_user):
 def home(request):
     context = {
         'recent_transactions': Transactions.objects.filter(
-            from_person=request.user,
-            to_person=request.user
+            from_person__user_id__exact=request.user.id,
+            to_person__user_id__exact=request.user.id,
         ).order_by('-id')[:10:-1],
         'requests': Requests.objects.filter(
-            from_person=request.user,
+            to_person__user_id__exact=request.user.id,
             cancelled=False,
-            completed=False
+            completed=False,
         ),
 
     }
@@ -30,8 +30,8 @@ def home(request):
 def activity(request):
     context = {
         'activity_list': Transactions.objects.filter(
-            from_person=request.user,
-            to_person=request.user
+            from_person__user_id__exact=request.user.id,
+            to_person__user_id__exact=request.user.id,
         )
     }
     return render(request, 'payapp/activity.html', context=context)
