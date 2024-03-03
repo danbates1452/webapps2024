@@ -4,4 +4,16 @@
 
 {% block content %}
     todo: a table of filterable transactions (wherein this user is sender or receiver)
+    {% if activity_list %}
+        {% for activity in activity_list %}
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ activity.from_person }} to {{ activity.to_person }}</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">{{ activity.amount }} on {{ activity.submission_datetime }}</h6>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <span>No activity</span>
+    {% endif %}
 {% endblock %}

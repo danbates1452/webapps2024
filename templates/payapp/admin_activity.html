@@ -3,5 +3,28 @@
 {% endblock %}
 
 {% block content %}
-    todo: a table of filterable transactions
+    {% if activity_list %}
+        <table>
+        <thead>
+        <tr>
+        <td>From</td>
+        <td>To</td>
+        <td>Amount</td>
+        <td>Submitted</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for activity in activity_list %}
+            <tr>
+                <td>{{ activity.from_person }}</td>
+                <td>{{ activity.to_person }}</td>
+                <td>{{ activity.amount }}</td>
+                <td>{{ activity.submission_datetime }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    {% else %}
+        <span>No activity found in database</span>
+    {% endif %}
 {% endblock %}

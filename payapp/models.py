@@ -20,22 +20,22 @@ class PayAppMoneyField(MoneyField):
         super().__init__(**kwargs)
 
 
-class Customer(models.Model):
+class Person(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)  # disable users rather than deleting them to preserve history
     balance = PayAppMoneyField()
 
 
 class Transactions(models.Model):
-    from_user = models.ForeignKey(Customer, on_delete=models.RESTRICT)
-    to_user = models.ForeignKey(Customer, on_delete=models.RESTRICT)
+    from_person = models.ForeignKey(Person, on_delete=models.RESTRICT)
+    to_person = models.ForeignKey(Person, on_delete=models.RESTRICT)
     amount = PayAppMoneyField()
     submission_datetime = models.DateTimeField()
 
 
 class Requests(models.Model):
-    by_user = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    from_user = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    by_person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    from_person = models.ForeignKey(Person, on_delete=models.CASCADE)
     amount = PayAppMoneyField()
     completed = models.BooleanField(default=False)
     cancelled = models.BooleanField(default=False)
