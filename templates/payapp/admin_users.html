@@ -1,0 +1,13 @@
+{% block title %}
+    All Transactions
+{% endblock %}
+
+{% block content %}
+    todo: a table of filterable users
+    
+    {% for customer in customer_list %}
+        {{ customer }}
+        {{ customer.user }}
+        {{ customer.balance }}
+    {% endfor %}
+{% endblock %}
