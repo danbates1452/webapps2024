@@ -1,10 +1,8 @@
 
-.navbar {
-    background: #ff8c1c
-}
-
-body {
-    background: #fff
+.navbar #mainnav {
+    background: #ff8c1c;
+    /* Fix bug in Bootstrap 5 */
+    --bs-navbar-padding-x: 0.5rem;
 }
 
 .button {

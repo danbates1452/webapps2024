@@ -5,6 +5,7 @@ from .views import home, activity, send, request, admin_users, admin_activity
 
 urlpatterns = [
     path('', home, name='home'),
+    path('home/', home,),
     path('activity/', activity, name='activity'),
     path('send/', send, name='send'),
     path('request/', request, name='request'),

@@ -3,16 +3,28 @@ from django.shortcuts import render, redirect
 from .models import Person, Transactions, Requests
 
 
-def restricted_area(check_user):
-    if check_user.is_staff and check_user.is_authenticated():
+def authenticated_area(check_user):
+    if check_user.is_authenticated:
+        return True
+    else:
+        redirect('login')
+        return False
+
+
+def admin_area(check_user):
+    if check_user.is_staff and authenticated_area(check_user):
         return True
     else:
         redirect('home')
         return False
 
+
 # todo: need a way to map user to customer easily
 def home(request):
+    authenticated_area(request.user)
+
     context = {
+        'person': Person.objects.filter(user__exact=request.user.id),
         'recent_transactions': Transactions.objects.filter(
             from_person__user_id__exact=request.user.id,
             to_person__user_id__exact=request.user.id,
@@ -28,6 +40,8 @@ def home(request):
 
 
 def activity(request):
+    authenticated_area(request.user)
+
     context = {
         'activity_list': Transactions.objects.filter(
             from_person__user_id__exact=request.user.id,
@@ -38,7 +52,7 @@ def activity(request):
 
 
 def send(request):
-
+    authenticated_area(request.user)
     # clean the form, and check if they have sufficient money
 
     with transaction.atomic():
@@ -52,13 +66,13 @@ def send(request):
 
 
 def request(request):
-
+    authenticated_area(request.user)
 
     return None
 
 
 def admin_users(request):
-    restricted_area(request.user)
+    admin_area(request.user)
 
     context = {
         'customer_list': Person.objects.all()
@@ -68,7 +82,7 @@ def admin_users(request):
 
 
 def admin_activity(request):
-    restricted_area(request.user)
+    admin_area(request.user)
 
     context = {
         'activity_list': Transactions.objects.all()  # todo: pagination
