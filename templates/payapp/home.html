@@ -7,7 +7,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-7">
-                <div class="card" style="width:25rem">
+                <div class="card bg-secondary" style="width:25rem">
                     <div class="card-body">
                         <h5 class="card-title">PalPay Balance</h5>
                         <div class="h3">{{ person.balance }}CUR</div>
@@ -17,7 +17,7 @@
                 top 5 recent transactions (if user then these must be for the user, if admin then these can be globally)
                 -> highlight each if its from the last 24hrs
 
-                <div class="card" style="width:25rem">
+                <div class="card bg-secondary" style="width:25rem">
                     <div class="card-header">Recent Transactions</div>
                     {% if recent_transactions %}
                         <ul class="list-group list-group-flush">
@@ -30,17 +30,17 @@
                             {% endfor %}
                         </ul>
                     {% else %}
-                        No recent transactions.
+                        <div class="text-center">No recent transactions.</div>
                     {% endif %}
                 </div>
             </div>
             <div class="col-sm">
                 <div class="btn-toolbar" role="toolbar">
                     <div class="btn-group m-2" role="group">
-                        <button type="button" class="btn btn-warning btn-lg">Send</button>
+                        <button type="button" class="btn btn-primary btn-lg">Send</button>
                     </div>
                     <div class="btn-group m-2" role="group">
-                        <button type="button" class="btn btn-warning btn-lg">Request</button>
+                        <button type="button" class="btn btn-primary btn-lg">Request</button>
                     </div>
                 </div>
 

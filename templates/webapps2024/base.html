@@ -1,4 +1,5 @@
 {% load static %}
+{% load bootstrap_customizer %}
 {% load crispy_forms_filters %} {% load crispy_forms_tags %}
 <!DOCTYPE html>
 <html lang="en">
@@ -7,20 +8,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="icon" href="{% static 'favicon.ico' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <style lang="css">{% bootstrap_theme_css_above_the_fold %}</style>
+    <link lang="css" href="{% static 'style.css' %}">
 </head>
-
 <body>
+<link rel="stylesheet" type="text/css" href="{% bootstrap_theme_css_below_the_fold_url %}">
+
 <!--Navbar-->
 <div>
-    <nav class="navbar navbar-expand-lg navbar-dark p-1" id="mainnav">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary p-1 ">
         <a class="navbar-brand" href="/home"><img src="{% static 'palpay-mono.png' %}" width="50" height="50" alt="palpay logo, two of the letter p backwards, overlayed on one another"></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="False" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="/home">Home</a>
@@ -39,7 +41,7 @@
                         </li>
                     {% endif %}
 
-                    <li class="nav-item float-right">
+                    <li class="nav-item">
                         <a class="nav-link" href="/logout">Logout <i>{{user.username}}</i></a>
                     </li>
                 {% else %}

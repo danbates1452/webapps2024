@@ -1,16 +1,10 @@
 
-.navbar #mainnav {
-    background: #ff8c1c;
-    /* Fix bug in Bootstrap 5 */
-    --bs-navbar-padding-x: 0.5rem;
+.navbar .navbar-nav {
+    display: inline-block;
+    float: none;
+    vertical-align: top;
 }
 
-.button {
-    background: #ff8c1c;
-    color: #fff;
-}
-
-.button .active {
-    background: #bf6812;
-    color: #bbb;
+.navbar .navbar-collapse {
+    text-align: center;
 }
