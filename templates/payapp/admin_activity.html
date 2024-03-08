@@ -1,10 +1,11 @@
+{% extends 'webapps2024/base.html' %}
 {% block title %}
     All Transactions
 {% endblock %}
 
 {% block content %}
     {% if activity_list %}
-        <table>
+        <table class="table">
         <thead>
         <tr>
         <td>From</td>

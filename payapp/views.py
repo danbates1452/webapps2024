@@ -81,7 +81,7 @@ def admin_users(request):
     admin_area(request.user)
 
     context = {
-        'customer_list': Person.objects.all()
+        'people': Person.objects.all()
     }
 
     return render(request, 'payapp/admin_users.html', context=context)

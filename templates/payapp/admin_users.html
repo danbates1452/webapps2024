@@ -1,13 +1,37 @@
+{% extends 'webapps2024/base.html' %}
 {% block title %}
     All Transactions
 {% endblock %}
 
 {% block content %}
     todo: a table of filterable users
-    
-    {% for customer in customer_list %}
-        {{ customer }}
-        {{ customer.user }}
-        {{ customer.balance }}
-    {% endfor %}
+    {% if people %}
+        <table class="table">
+        <thead>
+        <tr>
+            <td>ID</td>
+            <td>First Name</td>
+            <td>Last Name</td>
+            <td>Username</td>
+            <td>Email Address</td>
+            <td>Password Hash</td>
+            <td>Account Balance</td>
+            <td>Account Status</td>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for person in people %}
+            <td>{{ person.user.id }}</td>
+            <td>{{ person.user.first_name }}</td>
+            <td>{{ person.user.last_name }}</td>
+            <td>{{ person.user.username }}</td>
+            <td>{{ person.user.email }}</td>
+            <td>{{ person.user.password }}</td>
+            <td>{{ person.balance }}</td>
+            <td>{% if person.active %} Active {% else %} Inactive {% endif %}</td>
+        {% endfor %}
+        </tbody>
+        </table>
+    {% endif %}
 {% endblock %}

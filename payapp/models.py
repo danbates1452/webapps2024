@@ -35,6 +35,13 @@ class Transaction(models.Model):
     amount = PayAppMoneyField()
     submission_datetime = models.DateTimeField()
 
+    def __str__(self):
+        return ' '.join([self.from_person.user.username,
+                         self.to_person.user.username,
+                         self.amount,
+                         self.submission_datetime
+                         ])
+
 
 class Request(models.Model):
     by_person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='requests_by')
@@ -42,3 +49,11 @@ class Request(models.Model):
     amount = PayAppMoneyField()
     completed = models.BooleanField(default=False)
     cancelled = models.BooleanField(default=False)
+
+    def __str__(self):
+        return ' '.join([self.by_person.user.username,
+                         self.to_person.user.username,
+                         self.amount,
+                         self.completed,
+                         self.cancelled
+                         ])
