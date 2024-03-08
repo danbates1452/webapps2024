@@ -1,5 +1,7 @@
 from django.db import transaction
 from django.shortcuts import render, redirect
+
+from .forms import SendForm
 from .models import Person, Transaction, Request
 
 
@@ -55,6 +57,10 @@ def send(request):
     authenticated_area(request.user)
     # clean the form, and check if they have sufficient money
 
+    #form = MyForm(initial={'charfield1': 'foo', 'charfield2': 'bar'})
+
+    form = SendForm(initial={'from_user': request.user.id})
+    context = {'form': form}
     with transaction.atomic():
         pass
         # perform transaction:
@@ -62,7 +68,7 @@ def send(request):
         # add to 'to' user balance (with converted currency)
         # save new transaction entry to db
 
-    return None
+    return render(request, 'payapp/send.html', context=context)
 
 
 def request(request):

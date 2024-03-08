@@ -25,6 +25,9 @@ class Person(models.Model):
     active = models.BooleanField(default=True)  # disable users rather than deleting them to preserve history
     balance = PayAppMoneyField()
 
+    def __str__(self):
+        return self.user.username + ' (inactive)' if not self.active else ''
+
 
 class Transaction(models.Model):
     from_person = models.ForeignKey(Person, on_delete=models.RESTRICT, related_name='transactions_from')

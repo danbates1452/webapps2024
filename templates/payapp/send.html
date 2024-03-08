@@ -1,10 +1,11 @@
 {% extends 'webapps2024/base.html' %}
+{% load crispy_forms_filters %}
 {% block title %}
     Send
 {% endblock %}
 
 {% block content %}
     todo: form
-    
+    {{ form|crispy }}
     optional todo: maybe give recent requests here if there are any?
 {% endblock content %}
