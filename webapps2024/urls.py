@@ -11,7 +11,8 @@ from register import views as register_views
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('bootstrap_customizer/', include(bootstrap_customizer_urls)),
-    path(r'favicon\.ico', RedirectView.as_view(url='/static/favicon.ico')),
+    path('favicon.ico/', RedirectView.as_view(url='/static/favicon.ico')),
+
     path('', include('payapp.urls')),
     path('register/', register_views.register_user, name='register'),
     path('login/', register_views.login_user, name='login'),

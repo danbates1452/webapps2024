@@ -1,6 +1,6 @@
 from django.db import transaction
 from django.shortcuts import render, redirect
-from .models import Person, Transactions, Requests
+from .models import Person, Transaction, Request
 
 
 def authenticated_area(check_user):
@@ -25,11 +25,11 @@ def home(request):
 
     context = {
         'person': Person.objects.filter(user__exact=request.user.id),
-        'recent_transactions': Transactions.objects.filter(
+        'recent_transactions': Transaction.objects.filter(
             from_person__user_id__exact=request.user.id,
             to_person__user_id__exact=request.user.id,
         ).order_by('-id')[:10:-1],
-        'requests': Requests.objects.filter(
+        'requests': Request.objects.filter(
             to_person__user_id__exact=request.user.id,
             cancelled=False,
             completed=False,
@@ -43,7 +43,7 @@ def activity(request):
     authenticated_area(request.user)
 
     context = {
-        'activity_list': Transactions.objects.filter(
+        'activity_list': Transaction.objects.filter(
             from_person__user_id__exact=request.user.id,
             to_person__user_id__exact=request.user.id,
         )
@@ -85,6 +85,6 @@ def admin_activity(request):
     admin_area(request.user)
 
     context = {
-        'activity_list': Transactions.objects.all()  # todo: pagination
+        'activity_list': Transaction.objects.all()  # todo: pagination
     }
     return render(request, 'payapp/admin_activity.html', context=context)

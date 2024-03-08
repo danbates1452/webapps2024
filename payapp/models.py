@@ -26,14 +26,14 @@ class Person(models.Model):
     balance = PayAppMoneyField()
 
 
-class Transactions(models.Model):
+class Transaction(models.Model):
     from_person = models.ForeignKey(Person, on_delete=models.RESTRICT, related_name='transactions_from')
     to_person = models.ForeignKey(Person, on_delete=models.RESTRICT, related_name='transactions_to')
     amount = PayAppMoneyField()
     submission_datetime = models.DateTimeField()
 
 
-class Requests(models.Model):
+class Request(models.Model):
     by_person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='requests_by')
     to_person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='requests_to')
     amount = PayAppMoneyField()

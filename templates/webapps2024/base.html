@@ -16,17 +16,20 @@
 
 <!--Navbar-->
 <div>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary p-1 ">
-        <a class="navbar-brand" href="/home"><img src="{% static 'palpay-mono.png' %}" width="50" height="50" alt="palpay logo, two of the letter p backwards, overlayed on one another"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="False" aria-label="Toggle navigation">
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary p-1 ">
+        <a class="navbar-brand" href="/home"><img src="{% static 'palpay-mono.png' %}" width="50" height="50" alt="palpay logo, two of the letter p backwards, overlaid on one another"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse-area" aria-controls="navbarText" aria-expanded="False" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav">
+        <div class="collapse navbar-collapse" id="navbar-collapse-area">
                 {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/home">Home</a>
-                    </li>
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home">Home</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="/activity"></a>
+                        </li>
                     <!--
                     <li class="nav-item">
                         <a class="nav-link" href="#">Nav Item</a>
@@ -34,22 +37,20 @@
                     -->
                     {% if user.is_staff %}
                         <li>
-                            <a class="nav-link" href="/admin-activity">Transactions</a>
+                            <a class="nav-link" href="/admin-activity">User Transactions</a>
                         </li>
                         <li>
-                            <a class="nav-link" href="/admin-users">Users</a>
+                            <a class="nav-link" href="/admin-users">User Management</a>
                         </li>
                     {% endif %}
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout <i>{{user.username}}</i></a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
-                    </li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Logout <i>{{user.username}}</i></a>
+                        </li>
+                    </ul>
                 {% endif %}
-            </ul>
+
         </div>
     </nav>
 </div>
