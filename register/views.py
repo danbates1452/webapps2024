@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import requires_csrf_token
 from .forms import RegisterForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 
 
+@requires_csrf_token
 def register_user(request):
     context = {'register_user': RegisterForm()}
     if request.POST:
@@ -21,6 +23,7 @@ def register_user(request):
         return render(request, template_name='register/register.html', context=context)
 
 
+@requires_csrf_token
 def login_user(request):
     context = {'login_user': AuthenticationForm()}
     if request.POST:

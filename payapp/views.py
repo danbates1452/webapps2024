@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import requires_csrf_token
 
 from .forms import SendForm
 from .models import Person, Transaction, Request
@@ -53,6 +54,7 @@ def activity(request):
     return render(request, 'payapp/activity.html', context=context)
 
 
+@requires_csrf_token
 def send(request):
     authenticated_area(request.user)
     # clean the form, and check if they have sufficient money
@@ -71,6 +73,7 @@ def send(request):
     return render(request, 'payapp/send.html', context=context)
 
 
+@requires_csrf_token
 def request(request):
     authenticated_area(request.user)
 
