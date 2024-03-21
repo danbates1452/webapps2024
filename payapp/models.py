@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
@@ -33,11 +35,11 @@ class Transaction(models.Model):
     from_person = models.ForeignKey(Person, on_delete=models.RESTRICT, related_name='transactions_from')
     to_person = models.ForeignKey(Person, on_delete=models.RESTRICT, related_name='transactions_to')
     amount = PayAppMoneyField()
-    submission_datetime = models.DateTimeField()
+    submission_datetime = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
-        return ' '.join([self.from_person.user.username,
-                         self.to_person.user.username,
+        return ' '.join([self.from_person.user.name__username,
+                         self.to_person.user.name__username,
                          self.amount,
                          self.submission_datetime
                          ])

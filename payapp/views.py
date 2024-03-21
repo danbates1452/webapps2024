@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import requires_csrf_token
 from django.contrib.sites.models import Site
 
-from .forms import SendForm
+from .forms import SendForm, RequestForm
 from .models import Person, Transaction, Request
 
 
@@ -80,8 +80,8 @@ def send(request):
         form = SendForm(request.POST)
         form.clean()
         if form.is_valid():
-            from_person = Person.objects.get(form.cleaned_data['from_user'])
-            to_person = Person.objects.get(form.cleaned_data['to_user'])
+            from_person = Person.objects.select_for_update().get(name__username=form.cleaned_data['from_user'])
+            to_person = Person.objects.select_for_update().get(name__username=form.cleaned_data['to_user'])
 
             if not from_person.active:
                 messages.error(request, 'Your account is not active')
@@ -124,7 +124,7 @@ def send(request):
         else:
             return render(request, 'payapp/send.html', {'form': form})
     else:
-        form = SendForm(initial={'from_user': request.user.id})
+        form = SendForm(initial={'from_user': Person.objects.get(request.user.id)})
         return render(request, 'payapp/send.html', {'form': form})
 
 
@@ -132,7 +132,8 @@ def send(request):
 def request(request):
     authenticated_area(request.user)
 
-    return None
+    form = RequestForm(initial={'by_user': Person.objects.get(request.user.id)})
+    return render(request, 'payapp/request.html', {'form': form})
 
 
 def admin_users(request):
