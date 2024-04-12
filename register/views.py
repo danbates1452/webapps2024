@@ -19,10 +19,8 @@ def register_user(request):
     else:
         return render(request, template_name='register/register.html', context=context)
     if form.is_valid():
-        new_user = form.save()
-        login(request, form.Meta.model)
-        # create Person object
-        Person.objects.create(user=new_user, balance=Money(1000 * call_currency_converter('GBP', ''),))
+        form.save()  # save new user
+        login(request, form.Meta.model)  # log in the new user automatically
         messages.success(request, 'Account created successfully')
         return redirect('home')
     else:

@@ -15,11 +15,11 @@ def admin_area(check_user):
         return redirect('home')
 
 
-CURRENCY_CONVERTER_API_URI = Site.objects.get_current().domain + '/conversion/'
+CURRENCY_CONVERTER_API_URI = 'https://' + Site.objects.get_current().domain + '/conversion'
 
 
 def call_currency_converter(currency_from, currency_to, amount_from):
-    request_uri = '/'.join([CURRENCY_CONVERTER_API_URI, currency_from, currency_to, amount_from])
+    request_uri = '/'.join([CURRENCY_CONVERTER_API_URI, currency_from, currency_to, str(amount_from)])
     response = requests.get(request_uri)  # todo: see if this needs a different retry strategy
     json_response = response.json()
 
