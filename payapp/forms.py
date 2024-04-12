@@ -14,4 +14,4 @@ class SendForm(forms.ModelForm):
 class RequestForm(forms.ModelForm):
     class Meta:
         model = Request
-        fields = '__all__'
+        exclude = ('by_person', 'completed', 'cancelled')

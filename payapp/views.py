@@ -12,6 +12,10 @@ from .forms import SendForm, RequestForm
 from .models import Person, Transaction, Request
 
 
+def get_current_person(request):
+    return Person.objects.filter(user__exact=request.user.id)
+
+
 def admin_area(check_user):
     if check_user.is_staff:
         return True
@@ -67,10 +71,11 @@ def call_currency_converter(currency_from, currency_to, amount_from):
 def send_money(request):
     if request.method == 'POST':
         form = SendForm(request.POST)
-        form.clean()
         if form.is_valid():
-            from_person = Person.objects.select_for_update().get(name__username=form.cleaned_data['from_user'])
-            to_person = Person.objects.select_for_update().get(name__username=form.cleaned_data['to_user'])
+            form.clean()
+
+            from_person = get_current_person(request).select_for_update()
+            to_person = Person.objects.select_for_update().get(form.cleaned_data['to_person'])
 
             if not from_person.active:
                 messages.error(request, 'Your account is not active')
@@ -113,14 +118,14 @@ def send_money(request):
         else:
             return render(request, 'payapp/send.html', {'form': form})
     else:
-        form = SendForm(initial={'from_user': Person.objects.get(user_id=request.user.id)})
+        form = SendForm(initial={'from_user': get_current_person(request)})
         return render(request, 'payapp/send.html', {'form': form})
 
 
 @login_required(login_url='/login/')
 @requires_csrf_token
 def request_money(request):
-    form = RequestForm(initial={'by_user': Person.objects.get(user_id=request.user.id)})
+    form = RequestForm(initial={'by_user': get_current_person(request)})
     return render(request, 'payapp/request.html', {'form': form})
 
 

@@ -28,7 +28,7 @@ class Person(models.Model):
     balance = PayAppMoneyField()
 
     def __str__(self):
-        return self.user.__str__() + ' (inactive)' if not self.active else ''
+        return self.user.__str__() + ' (inactive)' if not self.active else self.user.__str__()
 
     class Meta:
         ordering = ("user", "active")
@@ -41,8 +41,8 @@ class Transaction(models.Model):
     submission_datetime = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
-        return ' '.join([self.from_person.user.name__username,
-                         self.to_person.user.name__username,
+        return ' '.join([self.from_person.user.__str__(),
+                         self.to_person.user.__str__(),
                          self.amount,
                          self.submission_datetime
                          ])
