@@ -10,17 +10,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import SendForm, RequestForm
 from .models import Person, Transaction, Request
-
-
-def get_current_person(request):
-    return Person.objects.filter(user__exact=request.user.id)
-
-
-def admin_area(check_user):
-    if check_user.is_staff:
-        return True
-    else:
-        return redirect('home')
+from common.util import call_currency_converter, get_current_person, admin_area
 
 
 # todo: need a way to map user to customer easily
@@ -50,19 +40,6 @@ def activity(request):
         )
     }
     return render(request, 'payapp/activity.html', context=context)
-
-
-CURRENCY_CONVERTER_API_URI = Site.objects.get_current().domain + '/conversion/'
-
-
-def call_currency_converter(currency_from, currency_to, amount_from):
-    request_uri = '/'.join([CURRENCY_CONVERTER_API_URI, currency_from, currency_to, amount_from])
-    response = requests.get(request_uri)  # todo: see if this needs a different retry strategy
-    json_response = response.json()
-
-    rate = json_response['data'][0]
-    amount_to = json_response['data'][1]
-    return rate, amount_to
 
 
 @login_required(login_url='/login/')

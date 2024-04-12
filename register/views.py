@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import requires_csrf_token
+
+from payapp.models import Person
 from .forms import RegisterForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from djmoney.money import Money
 
-
-def unpack_form_errors(errors):
-    return [element for sublist in errors.values() for element in sublist]
+from common.util import unpack_form_errors
 
 
 @requires_csrf_token
@@ -18,8 +19,10 @@ def register_user(request):
     else:
         return render(request, template_name='register/register.html', context=context)
     if form.is_valid():
-        form.save()
+        new_user = form.save()
         login(request, form.Meta.model)
+        # create Person object
+        Person.objects.create(user=new_user, balance=Money(1000 * call_currency_converter('GBP', ''),))
         messages.success(request, 'Account created successfully')
         return redirect('home')
     else:
