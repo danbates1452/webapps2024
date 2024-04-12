@@ -74,8 +74,8 @@ def send_money(request):
         if form.is_valid():
             form.clean()
 
-            from_person = get_current_person(request).select_for_update()
-            to_person = Person.objects.select_for_update().get(form.cleaned_data['to_person'])
+            from_person = Person.objects.select_for_update().get(user_id=request.user.id)
+            to_person = Person.objects.select_for_update().get(id=form.cleaned_data['to_person'].id)
 
             if not from_person.active:
                 messages.error(request, 'Your account is not active')

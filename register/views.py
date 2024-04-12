@@ -6,6 +6,10 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 
 
+def unpack_form_errors(errors):
+    return [element for sublist in errors.values() for element in sublist]
+
+
 @requires_csrf_token
 def register_user(request):
     context = {'register_user': RegisterForm()}
@@ -19,7 +23,8 @@ def register_user(request):
         messages.success(request, 'Account created successfully')
         return redirect('home')
     else:
-        messages.error(request, "Invalid input")
+        for error_message in unpack_form_errors(form.errors):
+            messages.error(request, error_message)
         return render(request, template_name='register/register.html', context=context)
 
 
