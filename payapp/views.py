@@ -113,14 +113,14 @@ def send_money(request):
         else:
             return render(request, 'payapp/send.html', {'form': form})
     else:
-        form = SendForm(initial={'from_user': Person.objects.get(request.user.id)})
+        form = SendForm(initial={'from_user': Person.objects.get(user_id=request.user.id)})
         return render(request, 'payapp/send.html', {'form': form})
 
 
 @login_required(login_url='/login/')
 @requires_csrf_token
 def request_money(request):
-    form = RequestForm(initial={'by_user': Person.objects.get(request.user.id)})
+    form = RequestForm(initial={'by_user': Person.objects.get(user_id=request.user.id)})
     return render(request, 'payapp/request.html', {'form': form})
 
 

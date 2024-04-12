@@ -28,7 +28,10 @@ class Person(models.Model):
     balance = PayAppMoneyField()
 
     def __str__(self):
-        return self.user.username + ' (inactive)' if not self.active else ''
+        return self.user.__str__() + ' (inactive)' if not self.active else ''
+
+    class Meta:
+        ordering = ("user", "active")
 
 
 class Transaction(models.Model):
@@ -43,6 +46,9 @@ class Transaction(models.Model):
                          self.amount,
                          self.submission_datetime
                          ])
+
+    class Meta:
+        ordering = ("submission_datetime", "from_person", "amount")
 
 
 class Request(models.Model):
@@ -59,3 +65,6 @@ class Request(models.Model):
                          self.completed,
                          self.cancelled
                          ])
+
+    class Meta:
+        ordering = ("by_person", "completed", "amount")
