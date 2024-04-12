@@ -6,32 +6,22 @@ from django.db import transaction
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import requires_csrf_token
 from django.contrib.sites.models import Site
+from django.contrib.auth.decorators import login_required
 
 from .forms import SendForm, RequestForm
 from .models import Person, Transaction, Request
 
 
-def authenticated_area(check_user):
-    if check_user.is_authenticated:
-        print(check_user, check_user.is_authenticated)
-        return True
-    else:
-        redirect('login')
-        return False
-
-
 def admin_area(check_user):
-    if check_user.is_staff and authenticated_area(check_user):
+    if check_user.is_staff:
         return True
     else:
-        redirect('home')
-        return False
+        return redirect('home')
 
 
 # todo: need a way to map user to customer easily
+@login_required(login_url='/login/')
 def home(request):
-    authenticated_area(request.user)
-
     context = {
         'person': Person.objects.filter(user__exact=request.user.id),
         'recent_transactions': Transaction.objects.filter(
@@ -43,14 +33,12 @@ def home(request):
             cancelled=False,
             completed=False,
         ),
-
     }
     return render(request, 'payapp/home.html', context=context)
 
 
+@login_required(login_url='/login/')
 def activity(request):
-    authenticated_area(request.user)
-
     context = {
         'activity_list': Transaction.objects.filter(
             from_person__user_id__exact=request.user.id,
@@ -73,10 +61,10 @@ def call_currency_converter(currency_from, currency_to, amount_from):
     return rate, amount_to
 
 
+@login_required(login_url='/login/')
 @requires_csrf_token
 @transaction.atomic
-def send(request):
-    authenticated_area(request.user)
+def send_money(request):
     if request.method == 'POST':
         form = SendForm(request.POST)
         form.clean()
@@ -129,14 +117,14 @@ def send(request):
         return render(request, 'payapp/send.html', {'form': form})
 
 
+@login_required(login_url='/login/')
 @requires_csrf_token
-def request(request):
-    authenticated_area(request.user)
-
+def request_money(request):
     form = RequestForm(initial={'by_user': Person.objects.get(request.user.id)})
     return render(request, 'payapp/request.html', {'form': form})
 
 
+@login_required(login_url='/login/')
 def admin_users(request):
     admin_area(request.user)
 
