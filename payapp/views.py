@@ -13,6 +13,7 @@ from .models import Person, Transaction, Request
 
 def authenticated_area(check_user):
     if check_user.is_authenticated:
+        print(check_user, check_user.is_authenticated)
         return True
     else:
         redirect('login')
