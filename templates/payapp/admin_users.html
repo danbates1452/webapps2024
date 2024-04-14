@@ -4,32 +4,25 @@
 {% endblock %}
 
 {% block content %}
-    todo: a table of filterable users
+    todo: add button to make admins (grant django superuser access)
     {% if people %}
         <table class="table">
         <thead>
         <tr>
             <td>ID</td>
-            <td>First Name</td>
-            <td>Last Name</td>
             <td>Username</td>
-            <td>Email Address</td>
-            <td>Password Hash</td>
-            <td>Account Balance</td>
-            <td>Account Status</td>
-
+            <td>Balance</td>
+            <td>Status</td>
         </tr>
         </thead>
         <tbody>
         {% for person in people %}
+            <tr>
             <td>{{ person.user.id }}</td>
-            <td>{{ person.user.first_name }}</td>
-            <td>{{ person.user.last_name }}</td>
             <td>{{ person.user.username }}</td>
-            <td>{{ person.user.email }}</td>
-            <td>{{ person.user.password }}</td>
             <td>{{ person.balance }}</td>
             <td>{% if person.active %} Active {% else %} Inactive {% endif %}</td>
+            </tr>
         {% endfor %}
         </tbody>
         </table>

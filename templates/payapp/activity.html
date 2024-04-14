@@ -1,19 +1,22 @@
 {% extends 'webapps2024/base.html' %}
 {% block title %}
-    Your activity
+    Previous Transactions
 {% endblock %}
 
 {% block content %}
-    todo: a table of filterable transactions (wherein this user is sender or receiver)
+    <h1>Previous Transactions</h1>
+    <br>
     {% if activity_list %}
+        <div class="d-flex">
         {% for activity in activity_list %}
-            <div class="card" style="width: 18rem;">
+            <div class="card bg-secondary text-light" style="width: 18rem;">
                 <div class="card-body">
                     <h5 class="card-title">{{ activity.from_person }} to {{ activity.to_person }}</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">{{ activity.amount }} on {{ activity.submission_datetime }}</h6>
+                    <h6 class="card-subtitle mb-2 ">{{ activity.amount }} on {{ activity.submission_datetime }}</h6>
                 </div>
             </div>
         {% endfor %}
+        </div>
     {% else %}
         <span>No activity</span>
     {% endif %}

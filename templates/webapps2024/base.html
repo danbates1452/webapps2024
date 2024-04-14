@@ -27,8 +27,8 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/home">Home</a>
                         </li>
-                        <li>
-                            <a class="nav-link" href="/activity"></a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/activity">Activity</a>
                         </li>
                     <!--
                     <li class="nav-item">
@@ -51,6 +51,10 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/logout">Logout <i>{{user.username}}</i></a>
                         </li>
+                    </ul>
+                {% elif short_title %} {# If this page has a short title while navigation is disabled - e.g. Public pages like Login and Register #}
+                    <ul class="navbar-nav justify-content-center">
+                        <li>{{ short_title }}</li>
                     </ul>
                 {% endif %}
 

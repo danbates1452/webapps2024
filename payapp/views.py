@@ -1,29 +1,37 @@
+from decimal import Decimal
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import requires_csrf_token
 from django.contrib.auth.decorators import login_required
+from djmoney.money import Money
 
 from .forms import SendForm, RequestForm
 from .models import Person, Transaction, Request
 from common.util import call_currency_converter, get_current_person, admin_area
 
 
-# todo: need a way to map user to customer easily
 @login_required(login_url='/login/')
 def home(request):
     context = {
         'person': Person.objects.filter(user__exact=request.user.id)[0],
         'recent_transactions': Transaction.objects.filter(
-            from_person__user_id__exact=request.user.id,
-            to_person__user_id__exact=request.user.id,
+            Q(from_person__user_id__exact=request.user.id) |
+            Q(to_person__user_id__exact=request.user.id)
         ).order_by('-id')[:10:-1],
         'requests': Request.objects.filter(
             to_person__user_id__exact=request.user.id,
             cancelled=False,
             completed=False,
         ),
+
     }
+    print(Request.objects.filter(
+        to_person__user_id__exact=request.user.id,
+        cancelled=False,
+        completed=False,
+    ))
     return render(request, 'payapp/home.html', context=context)
 
 
@@ -31,9 +39,9 @@ def home(request):
 def activity(request):
     context = {
         'activity_list': Transaction.objects.filter(
-            from_person__user_id__exact=request.user.id,
-            to_person__user_id__exact=request.user.id,
-        )
+            Q(from_person__user_id__exact=request.user.id) |
+            Q(to_person__user_id__exact=request.user.id)
+        )  # user is either exactly the sender or recipient
     }
     return render(request, 'payapp/activity.html', context=context)
 
@@ -57,11 +65,13 @@ def send_money(request):
                 messages.error(request, 'Recipient account not active')
                 return render(request, 'payapp/send.html', {'form': form})
 
-            amount = form.cleaned_data['amount']
+            amount = Decimal(form.cleaned_data['amount'].amount)
 
             subtraction_amount = amount
             addition_amount = amount
-            transaction_currency = form.cleaned_data['amount_currency']
+            transaction_currency = str(form.cleaned_data['amount'].currency)
+            print(amount, type(amount))
+            print(transaction_currency, type(transaction_currency))
 
             if transaction_currency != from_person.balance_currency:
                 subtraction_amount = \
@@ -71,20 +81,22 @@ def send_money(request):
                 addition_amount = \
                     call_currency_converter(transaction_currency, to_person.balance_currency, subtraction_amount)[1]
 
-            if from_person.balance >= subtraction_amount:  # perform transaction:
+            if from_person.balance.amount >= subtraction_amount:  # perform transaction:
                 # subtract 'from' user balance (with converting currency if needed) and save
-                from_person.balance -= subtraction_amount
+                from_person.balance -= Money(subtraction_amount, from_person.balance.currency)
                 from_person.save()
 
                 # add to 'to' user balance (with converted currency) and save
-                to_person.balance += addition_amount
+                to_person.balance += Money(addition_amount, to_person.balance.currency)
                 to_person.save()
 
+                # add from_person to the transaction
+                form.instance.from_person = from_person
                 # save new transaction entry to db
                 form.save()
 
                 messages.success(request, f'Payment Successful: you have sent {amount} to {to_person.user.username}')
-                return render(request, 'payapp/send.html')
+                return redirect('home')
             else:
                 messages.error(request, "Insufficient funds for transaction")
                 return render(request, 'payapp/send.html', {'form': form})
@@ -113,6 +125,7 @@ def admin_users(request):
     return render(request, 'payapp/admin_users.html', context=context)
 
 
+@login_required(login_url='/login/')
 def admin_activity(request):
     admin_area(request.user)
 

@@ -17,12 +17,10 @@
                 <div class="card bg-secondary" style="width:25rem">
                     <div class="card-header">Recent Transactions</div>
                     {% if recent_transactions %}
-                        <ul class="list-group list-group-flush">
+                        <ul class="list-group list-group-flush text-light">
                             {% for rt in recent_transactions %}
-                                <li class="list-group-item">
-                                    <div class="align-left">{{ rt.amount }}</div>
-                                    <div class="align-center">{{ rt.submission_datetime|date }}</div>
-                                    <div class="align-right">{{ rt.to_person.user.username }}</div>
+                                <li class="list-group-item bg-secondary">
+                                    <span>{{ rt.submission_datetime|date }} | {{ rt.from_person.user.username }} -> {{ rt.amount }} -> {{ rt.to_person.user.username }}</span>
                                 </li>
                             {% endfor %}
                         </ul>
@@ -56,7 +54,6 @@
                         </ul>
                 </div>
                 {% endif %}
-                optional: 'send again' list of users that the user has previously sent money to
             </div>
         </div>
     </div>

@@ -43,8 +43,8 @@ class Transaction(models.Model):
     def __str__(self):
         return ' '.join([self.from_person.user.__str__(),
                          self.to_person.user.__str__(),
-                         self.amount,
-                         self.submission_datetime
+                         self.amount.__str__(),
+                         self.submission_datetime.__str__()
                          ])
 
     class Meta:
@@ -59,9 +59,9 @@ class Request(models.Model):
     cancelled = models.BooleanField(default=False)
 
     def __str__(self):
-        return ' '.join([self.by_person.user.username,
-                         self.to_person.user.username,
-                         self.amount,
+        return ' '.join([self.by_person.user.__str__(),
+                         self.to_person.user.__str__(),
+                         self.amount.__str__(),
                          self.completed,
                          self.cancelled
                          ])
