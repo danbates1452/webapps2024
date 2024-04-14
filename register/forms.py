@@ -20,6 +20,6 @@ class RegisterForm(UserCreationForm):
         cleaned_currency = self.cleaned_data['currency']
         rate = call_currency_converter('GBP', cleaned_currency, 1000)[0]
         # converted_starting_balance = call_currency_converter('GBP', cleaned_currency, 1000)[1]
-        converted_starting_balance = Money(1000 * rate)
+        converted_starting_balance = Money(1000 * rate, currency=cleaned_currency)
         Person.objects.create(user=saved_object, balance=converted_starting_balance)
         return saved_object

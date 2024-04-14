@@ -13,7 +13,7 @@ from common.util import call_currency_converter, get_current_person, admin_area
 @login_required(login_url='/login/')
 def home(request):
     context = {
-        'person': Person.objects.filter(user__exact=request.user.id),
+        'person': Person.objects.filter(user__exact=request.user.id)[0],
         'recent_transactions': Transaction.objects.filter(
             from_person__user_id__exact=request.user.id,
             to_person__user_id__exact=request.user.id,
