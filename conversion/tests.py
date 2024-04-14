@@ -4,8 +4,26 @@ from common.util import call_currency_converter
 
 class CallCurrencyConverterTestCase(TestCase):
     def setUp(self):
-        currencies = ['GBP', 'USD', 'EUR']
+        self.currency_map = {
+            'GBP': {
+                'USD': 1.3,
+                'EUR': 1.1,
+            },
+            'USD': {
+                'GBP': 0.7,
+                'EUR': 0.8,
+            },
+            'EUR': {
+                'GBP': 0.9,
+                'USD': 1.2,
+            },
+        }
 
-    def test1(self):
-        result = call_currency_converter('GBP', 'GBP', 1)
-        self.assertEquals()
+    def testExpectedBehaviour(self):
+        amounts_to_convert = [1, 5, 100, 10000, -1, -100000000000000, 0.5, -0.5]
+        for amount in amounts_to_convert:
+            for currency1, conversion_matrix in self.currency_map.items():
+                for currency2, expected_rate in conversion_matrix.items():
+                    actual_rate, converted_value = call_currency_converter(currency1, currency2, amount)
+                    self.assertEqual(expected_rate, actual_rate)
+                    self.assertEqual(abs(expected_rate * amount), converted_value)

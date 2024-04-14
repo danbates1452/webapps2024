@@ -1,9 +1,12 @@
 from django.conf import settings
 from django.contrib import messages
+from django.core import serializers
 from django.core.exceptions import ValidationError
 from decimal import Decimal
+
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
-from rest_framework.serializers import ListSerializer
 
 currency_map = {
     'GBP': {
@@ -29,23 +32,28 @@ def validate_currency(currency):
         )
 
 
-def convert(request):
-    if request.GET:
-        try:
-            currency1 = validate_currency(request.GET['currency1'])
-            currency2 = validate_currency(request.GET['currency2'])
-            amount_of_currency1 = request.GET['amount_of_currency1']
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,))
+def convert(request, currency1, currency2, amount_of_currency1):
+    try:
+        currency1 = validate_currency(currency1)
+        currency2 = validate_currency(currency2)
+        amount_of_currency1 = abs(int(amount_of_currency1))
 
-            if currency1 == currency2:
-                rate = 1
-            else:
-                rate = currency_map[currency1][currency2]
+        if currency1 == currency2:
+            rate = 1
+        else:
+            rate = currency_map[currency1][currency2]
 
-            converted_amount = Decimal(rate * amount_of_currency1)
+        converted_amount = Decimal(rate * amount_of_currency1)
 
-            return Response(data=ListSerializer(data=[rate, converted_amount], allow_empty=False))
+        data = [rate, converted_amount]
+        # serialized_data = serializers.serialize("json", data)
 
-        except ValidationError as e:
-            messages.add_message(request, messages.ERROR, e)
-            print(e)  # todo: remove in submission
-            return Response(data=ListSerializer(data=e, allow_empty=False))
+        return Response(data=data)
+
+    except ValidationError as error:
+        messages.add_message(request, messages.ERROR, error)
+        print(error)  # todo: remove in submission
+        serialized_error = serializers.serialize("json", error)
+        return Response(data=serialized_error)
