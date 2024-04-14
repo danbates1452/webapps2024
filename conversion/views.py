@@ -30,6 +30,7 @@ def validate_currency(currency):
             message="%(currency) is not a valid currency on this system.",
             params={'currency': currency}
         )
+    return currency
 
 
 @api_view(('GET',))
@@ -38,7 +39,7 @@ def convert(request, currency1, currency2, amount_of_currency1):
     try:
         currency1 = validate_currency(currency1)
         currency2 = validate_currency(currency2)
-        amount_of_currency1 = abs(int(amount_of_currency1))
+        amount_of_currency1 = abs(float(amount_of_currency1))
 
         if currency1 == currency2:
             rate = 1

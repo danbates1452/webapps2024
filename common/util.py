@@ -20,13 +20,11 @@ CURRENCY_CONVERTER_API_URI = 'https://' + Site.objects.get_current().domain + '/
 
 def call_currency_converter(currency_from, currency_to, amount_from):
     request_uri = '/'.join([CURRENCY_CONVERTER_API_URI, currency_from, currency_to, str(amount_from)])
-    print(request_uri)
+
     response = requests.get(request_uri, verify=False)
     # SSL certificate checking is disabled as ours is self-signed and will cause an error
 
-    print(request_uri, response)
     json_response = response.json()
-
     rate = json_response[0]
     amount_to = json_response[1]
     return rate, amount_to

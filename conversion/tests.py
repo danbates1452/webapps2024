@@ -24,6 +24,13 @@ class CallCurrencyConverterTestCase(TestCase):
         for amount in amounts_to_convert:
             for currency1, conversion_matrix in self.currency_map.items():
                 for currency2, expected_rate in conversion_matrix.items():
-                    actual_rate, converted_value = call_currency_converter(currency1, currency2, amount)
+                    expected_converted_value = abs(expected_rate * amount)
+                    actual_rate, actual_converted_value = call_currency_converter(currency1, currency2, amount)
+                    # For debugging
+                    # print("---", currency1, currency2)
+                    # print('---', expected_rate, actual_rate)
+                    # print(amount, expected_converted_value, actual_converted_value)
+                    # print('\n')
                     self.assertEqual(expected_rate, actual_rate)
-                    self.assertEqual(abs(expected_rate * amount), converted_value)
+                    self.assertEqual(expected_converted_value, actual_converted_value)
+                    self.assertNotEqual(amount, actual_converted_value)
