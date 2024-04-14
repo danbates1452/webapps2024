@@ -1,11 +1,7 @@
-import requests
-import json
-import time
 from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import requires_csrf_token
-from django.contrib.sites.models import Site
 from django.contrib.auth.decorators import login_required
 
 from .forms import SendForm, RequestForm

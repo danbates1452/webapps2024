@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-1rwmn@23)19@tu+c30p!w1yzy2-d_k%=l(7n29dh+f(0-6qv%l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.45', '.danbat.es', '.amazonaws.com']
 
 
 # Application definition
@@ -145,3 +145,6 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CURRENCIES = ('GBP', 'USD', 'EUR')
 CURRENCY_CHOICES = [('GBP', 'GBP £'), ('USD', 'USD $'), ('EUR', 'EUR €')]
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 5 * 60
