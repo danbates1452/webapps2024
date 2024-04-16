@@ -64,9 +64,9 @@ def do_payment(request, sender, recipient, amount):
 
     subtraction_value, addition_value = value, value
     if transaction_currency != sender.balance_currency:
-        subtraction_value = call_currency_converter(transaction_currency, sender.balance_currency, value)[1]
+        subtraction_value = call_currency_converter(str(transaction_currency), sender.balance_currency, value)[1]
     if transaction_currency != recipient.balance_currency:
-        addition_value = call_currency_converter(transaction_currency, recipient.balance_currency, value)[1]
+        addition_value = call_currency_converter(str(transaction_currency), recipient.balance_currency, value)[1]
 
     if sender.balance.amount >= subtraction_value:
         sender.balance -= Money(subtraction_value, sender.balance_currency)

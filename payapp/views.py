@@ -22,9 +22,6 @@ def home(request):
 
     forms = [RequestResponseForm(instance=rq) for rq in requests]
 
-    print(requests)
-    print(forms)
-
     context = {
         'person': Person.objects.filter(user__exact=request.user.id)[0],
         'recent_transactions': Transaction.objects.filter(
@@ -109,7 +106,6 @@ def request_response(request):
         form = RequestResponseForm(request.POST)
         if form.is_valid():
             form.clean()
-
             if form.cleaned_data['status'] == Request.StatusChoices.PENDING:
                 messages.error(request, 'Payment request was already pending')
             elif form.cleaned_data['status'] == Request.StatusChoices.COMPLETED:
@@ -123,6 +119,12 @@ def request_response(request):
                                     amount=amount)
 
                 if result:  # if success
+                    request_instance = Request.objects.get(by_person__exact=by_person,
+                                                           to_person__exact=to_person,
+                                                           amount__exact=amount,
+                                                           status__exact=Request.StatusChoices.PENDING)
+                    # make sure we update rather than create
+                    form = RequestResponseForm(request.POST, instance=request_instance)
                     form.save()
 
                     # record this transaction
@@ -130,14 +132,25 @@ def request_response(request):
                         from_person=to_person,
                         to_person=by_person,
                         amount=amount,
-                        submission_datetime=datetime.now
+                        submission_datetime=datetime.now()
                     )
 
             elif form.cleaned_data['status'] == Request.StatusChoices.CANCELLED:
+                print(form.cleaned_data)
+                request_instance = Request.objects.get(by_person__exact=form.cleaned_data['by_person'],
+                                                       to_person__exact=form.cleaned_data['to_person'],
+                                                       amount__exact=Money(form.cleaned_data['amount'], form.cleaned_data['amount_currency']),
+                                                       status__exact=Request.StatusChoices.PENDING)
+                # make sure we update rather than create
+                form = RequestResponseForm(request.POST, instance=request_instance)
                 form.save()
                 messages.success(request, 'Request cancelled successfully.')
             else:
                 messages.error(request, 'Invalid operation')
+        else:
+            print(form.errors)
+            print(form.instance.amount)
+            print(form.instance)
 
     return redirect('home')
 

@@ -27,6 +27,6 @@ class RequestResponseForm(forms.ModelForm):
         fields = '__all__'
         widgets = {'by_person': forms.HiddenInput(),
                    'to_person': forms.HiddenInput(),
-                   'amount': forms.HiddenInput()}
+                   #'amount': forms.HiddenInput()
+                   }
         # Only non-hidden will be status
-
