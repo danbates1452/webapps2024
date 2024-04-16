@@ -41,9 +41,7 @@ def unpack_form_errors(errors):
 
 
 @transaction.atomic
-def do_payment(request, sender, recipient, amount, source_page):
-    # on success redirect to home, on failure do nothing and let parent
-    # function return them
+def do_payment(request, sender, recipient, amount):
     current_person = get_current_person(request)
 
     sender_noun = 'Sender'
@@ -56,10 +54,10 @@ def do_payment(request, sender, recipient, amount, source_page):
     inactivity_message = ' account is not currently active.'
     if not sender.active:
         messages.error(request, sender_noun + inactivity_message)
-        return redirect(source_page)
+        return False
     if not recipient.active:
         messages.error(request, recipient_noun + inactivity_message)
-        return redirect(source_page)
+        return False
 
     value = Decimal(amount.amount)
     transaction_currency = amount.currency

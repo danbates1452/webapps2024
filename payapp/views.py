@@ -63,11 +63,13 @@ def send_money(request):
             result = do_payment(request=request,
                                 sender=from_person,
                                 recipient=to_person,
-                                amount=amount,
-                                source_page='send')
+                                amount=amount)
             if result:  # if success
                 form.save()
                 return redirect('home')
+            else:
+                # if failed, return to page with form filled as it was submitted
+                return render(request, 'payapp/send.html', {'form': form})
 
     form = SendForm(initial={'from_user': get_current_person(request)})
     return render(request, 'payapp/send.html', {'form': form})
@@ -118,8 +120,7 @@ def request_response(request):
                 result = do_payment(request=request,
                                     sender=to_person,
                                     recipient=by_person,
-                                    amount=amount,
-                                    source_page='home')
+                                    amount=amount)
 
                 if result:  # if success
                     form.save()
@@ -131,8 +132,6 @@ def request_response(request):
                         amount=amount,
                         submission_datetime=datetime.now
                     )
-
-                    return redirect('home')
 
             elif form.cleaned_data['status'] == Request.StatusChoices.CANCELLED:
                 form.save()
