@@ -28,7 +28,13 @@
                             <a class="nav-link" href="/home">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/activity">Activity</a>
+                            <a class="nav-link" href="/activity">History</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/send">Transfer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/request">Request</a>
                         </li>
                     <!--
                     <li class="nav-item">
@@ -37,13 +43,13 @@
                     -->
                     {% if user.is_staff %}
                         <li>
-                            <a class="nav-link" href="/admin-activity">User Transactions</a>
+                            <a class="nav-link font-weight-bold" href="/admin-activity">User Transactions</a>
                         </li>
                         <li>
-                            <a class="nav-link" href="/admin-users">User Management</a>
+                            <a class="nav-link font-weight-bold" href="/admin-users">User Management</a>
                         </li>
                         <li>
-                            <a class="nav-link" href="/admin/">Django Admin Panel</a>
+                            <a class="nav-link font-weight-bold" href="/admin/">Django Admin Panel</a>
                         </li>
                     {% endif %}
                     </ul>

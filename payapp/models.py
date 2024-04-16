@@ -55,16 +55,20 @@ class Request(models.Model):
     by_person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='requests_by')
     to_person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='requests_to')
     amount = PayAppMoneyField()
-    completed = models.BooleanField(default=False)
-    cancelled = models.BooleanField(default=False)
+
+    class StatusChoices(models.TextChoices):
+        PENDING = "PENDING"
+        COMPLETED = "COMPLETED"
+        CANCELLED = "CANCELLED"
+
+    status = models.CharField(choices=StatusChoices, default=StatusChoices.PENDING, max_length=9)
 
     def __str__(self):
         return ' '.join([self.by_person.user.__str__(),
                          self.to_person.user.__str__(),
                          self.amount.__str__(),
-                         self.completed,
-                         self.cancelled
+                         self.status
                          ])
 
     class Meta:
-        ordering = ("by_person", "completed", "amount")
+        ordering = ("by_person", "status", "amount")

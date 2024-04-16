@@ -21,17 +21,15 @@ def home(request):
             Q(to_person__user_id__exact=request.user.id)
         ).order_by('-id')[:10:-1],
         'requests': Request.objects.filter(
-            to_person__user_id__exact=request.user.id,
-            cancelled=False,
-            completed=False,
+            (Q(to_person__user_id__exact=request.user.id) | Q(from_person__user_id__exact=request.user.id)) and
+            Q(status=Request.StatusChoices.PENDING)
         ),
-
     }
+
     print(Request.objects.filter(
-        to_person__user_id__exact=request.user.id,
-        cancelled=False,
-        completed=False,
-    ))
+        Q(by_person__user_id__exact=request.user.id) | Q(to_person__user_id__exact=request.user.id)
+    )
+    )
     return render(request, 'payapp/home.html', context=context)
 
 
@@ -111,7 +109,32 @@ def send_money(request):
 @requires_csrf_token
 def request_money(request):
     form = RequestForm(initial={'by_user': get_current_person(request)})
+    if request.method == 'POST':
+        form = RequestForm(request.POST)
+        if form.is_valid():
+            form.clean()
+
+            if not form.cleaned_data['by_person'].active:
+                messages.error(request, 'Your account is not active.')
+                return render(request, 'payapp/request.html', {'form': form})
+            elif not form.cleaned_data['to_person'].active:
+                messages.error(request, 'Requested account is not active.')
+                return render(request, 'payapp/request.html', {'form': form})
+
+            form.save()
+            return redirect('home')  # redirect to same page to avoid replay attacks
+
     return render(request, 'payapp/request.html', {'form': form})
+
+
+@login_required(login_url='/login/')
+def request_response(request):
+    # todo: have this process one of two possible request responses from the homepage
+    # refuse (cancel), accept (completed)
+    if request.method == 'POST':
+        print(vars(request))
+
+    return redirect('home')
 
 
 @login_required(login_url='/login/')

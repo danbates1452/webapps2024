@@ -14,4 +14,4 @@ class TransactionAdmin(admin.ModelAdmin):
 
 @admin.register(Request)
 class RequestAdmin(admin.ModelAdmin):
-    list_display = ("by_person", "to_person", "amount", "completed", "cancelled")
+    list_display = ("by_person", "to_person", "amount", "status")

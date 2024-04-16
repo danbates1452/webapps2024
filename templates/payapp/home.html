@@ -30,7 +30,8 @@
                 </div>
             </div>
             <div class="col">
-                <div class="btn-toolbar" role="toolbar">
+                <!--
+                <div class="btn-toolbar justify-content-center" role="toolbar">
                     <div class="btn-group m-2" role="group">
                         <a type="button" class="btn btn-primary btn-lg" href="{%  url 'send' %}">Send</a>
                     </div>
@@ -38,22 +39,34 @@
                         <a type="button" class="btn btn-primary btn-lg" href="{% url 'request' %}">Request</a>
                     </div>
                 </div>
-
-                {% if requests %}
-                <div class="card" style="width:25rem">
+                -->
+                
+                <div class="card bg-secondary" style="width:25rem">
                     <div class="card-header">Payment Requests</div>
-
+                    {% if requests %}
                         <ul class="list-group list-group-flush">
                             {% for rs in requests %}
-                                <li class="list-group-item">
+                                <li class="list-group-item bg-secondary">
                                     <div class="align-left">{{ rs.amount }}</div>
                                     <!--<div class="align-center">{{ rs.submission_datetime|date }}</div>-->
                                     <div class="align-right">{{ rs.by_person.user.username }}</div>
                                 </li>
+                                <li class="list-group-item bg-secondary">
+                                    <form action="/request-response/" method="POST">
+                                        <input type="submit" class="btn btn-success" value="Accept">
+                                    </form>
+
+                                    <form action="/request-response/" method="POST">
+                                        <input type="submit" class="btn btn-success" value="Refuse">
+                                    </form>
+                                </li>
                             {% endfor %}
                         </ul>
+                    {% else %}
+                        <div class="text-center">No pending requests.</div>
+                    {% endif %}  
                 </div>
-                {% endif %}
+                
             </div>
         </div>
     </div>
