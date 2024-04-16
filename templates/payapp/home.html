@@ -53,6 +53,11 @@
                                 {% if rs.to_person.user_id == person.user_id %} {# if requested from current user #}
                                 <li class="list-group-item bg-secondary">
                                     <form action="/request-response/" method="POST">
+                                        <script id="workaround-for-djmoney-bug">
+                                            setTimeout(function(){
+                                                document.getElementById("div_id_amount").style.display="none"
+                                            }, 0);
+                                        </script>
                                         {% csrf_token %}
                                         {{ form|crispy }}
                                         <input type="submit" class="btn btn-success m-1" value="Confirm">

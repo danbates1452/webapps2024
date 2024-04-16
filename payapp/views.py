@@ -139,7 +139,7 @@ def request_response(request):
                 print(form.cleaned_data)
                 request_instance = Request.objects.get(by_person__exact=form.cleaned_data['by_person'],
                                                        to_person__exact=form.cleaned_data['to_person'],
-                                                       amount__exact=Money(form.cleaned_data['amount'], form.cleaned_data['amount_currency']),
+                                                       amount__exact=form.cleaned_data['amount'],
                                                        status__exact=Request.StatusChoices.PENDING)
                 # make sure we update rather than create
                 form = RequestResponseForm(request.POST, instance=request_instance)
