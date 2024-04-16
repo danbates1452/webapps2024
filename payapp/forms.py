@@ -21,3 +21,12 @@ class RequestForm(forms.ModelForm):
         }
 
 
+class RequestResponseForm(forms.ModelForm):
+    class Meta:
+        model = Request
+        fields = '__all__'
+        widgets = {'by_person': forms.HiddenInput(),
+                   'to_person': forms.HiddenInput(),
+                   'amount': forms.HiddenInput()}
+        # Only non-hidden will be status
+

@@ -1,4 +1,5 @@
 {% extends 'webapps2024/base.html' %}
+{% load crispy_forms_filters %}
 {% block title %}
     Summary
 {% endblock %}
@@ -43,35 +44,20 @@
                 
                 <div class="card bg-secondary" style="width:25rem">
                     <div class="card-header">Pending Requests</div>
-                    {% if requests %}
+                    {% if requests_and_forms %}
                         <ul class="list-group list-group-flush">
-                            {% for rs in requests %}
+                            {% for rs, form in requests_and_forms %}
                                 <li class="list-group-item bg-secondary">
                                     <span>{{ rs.by_person.user.username }} requested {{ rs.amount }} from {{ rs.to_person.user.username }} </span>
                                 </li>
                                 {% if rs.to_person.user_id == person.user_id %} {# if requested from current user #}
                                 <li class="list-group-item bg-secondary">
-                                    <div class="form-group d-flex">
-                                        <form action="/request-response/" method="POST">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="by_person" value="{{ rs.by_person.id }}">
-                                            <input type="hidden" name="to_person" value="{{ rs.to_person.id }}">
-                                            <input type="hidden" name="amount" value="{{ rs.amount.amount }}">
-                                            <input type="hidden" name="currency" value="{{ rs.amount.currency }}">
-                                            <input type="hidden" name="status" value="{{ rs.status }}">
-                                            <input type="submit" class="btn btn-success m-1" value="Accept">
-                                        </form>
-
-                                        <form action="/request-response/" method="POST">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="by_person" value="{{ rs.by_person.id }}">
-                                            <input type="hidden" name="to_person" value="{{ rs.to_person.id }}">
-                                            <input type="hidden" name="amount" value="{{ rs.amount.amount }}">
-                                            <input type="hidden" name="currency" value="{{ rs.amount.currency }}">
-                                            <input type="hidden" name="status" value="{{ rs.status }}">
-                                            <input type="submit" class="btn btn-danger form-control m-1" value="Refuse">
-                                        </form>
-                                    </div>
+                                    <form action="/request-response/" method="POST">
+                                        {% csrf_token %}
+                                        {{ form|crispy }}
+                                        <input type="submit" class="btn btn-success m-1" value="Confirm">
+                                    </form>
+                                
                                 </li>
                                 {% endif %}
                             {% endfor %}
