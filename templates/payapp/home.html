@@ -42,24 +42,38 @@
                 -->
                 
                 <div class="card bg-secondary" style="width:25rem">
-                    <div class="card-header">Payment Requests</div>
+                    <div class="card-header">Pending Requests</div>
                     {% if requests %}
                         <ul class="list-group list-group-flush">
                             {% for rs in requests %}
                                 <li class="list-group-item bg-secondary">
-                                    <div class="align-left">{{ rs.amount }}</div>
-                                    <!--<div class="align-center">{{ rs.submission_datetime|date }}</div>-->
-                                    <div class="align-right">{{ rs.by_person.user.username }}</div>
+                                    <span>{{ rs.by_person.user.username }} requested {{ rs.amount }} from {{ rs.to_person.user.username }} </span>
                                 </li>
+                                {% if rs.to_person.user_id == person.user_id %} {# if requested from current user #}
                                 <li class="list-group-item bg-secondary">
-                                    <form action="/request-response/" method="POST">
-                                        <input type="submit" class="btn btn-success" value="Accept">
-                                    </form>
+                                    <div class="form-group d-flex">
+                                        <form action="/request-response/" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="by_person" value="{{ rs.by_person.id }}">
+                                            <input type="hidden" name="to_person" value="{{ rs.to_person.id }}">
+                                            <input type="hidden" name="amount" value="{{ rs.amount.amount }}">
+                                            <input type="hidden" name="currency" value="{{ rs.amount.currency }}">
+                                            <input type="hidden" name="status" value="{{ rs.status }}">
+                                            <input type="submit" class="btn btn-success m-1" value="Accept">
+                                        </form>
 
-                                    <form action="/request-response/" method="POST">
-                                        <input type="submit" class="btn btn-success" value="Refuse">
-                                    </form>
+                                        <form action="/request-response/" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="by_person" value="{{ rs.by_person.id }}">
+                                            <input type="hidden" name="to_person" value="{{ rs.to_person.id }}">
+                                            <input type="hidden" name="amount" value="{{ rs.amount.amount }}">
+                                            <input type="hidden" name="currency" value="{{ rs.amount.currency }}">
+                                            <input type="hidden" name="status" value="{{ rs.status }}">
+                                            <input type="submit" class="btn btn-danger form-control m-1" value="Refuse">
+                                        </form>
+                                    </div>
                                 </li>
+                                {% endif %}
                             {% endfor %}
                         </ul>
                     {% else %}

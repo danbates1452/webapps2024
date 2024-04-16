@@ -26,10 +26,8 @@ def home(request):
         ),
     }
 
-    print(Request.objects.filter(
-        Q(by_person__user_id__exact=request.user.id) | Q(to_person__user_id__exact=request.user.id)
-    )
-    )
+
+
     return render(request, 'payapp/home.html', context=context)
 
 
@@ -68,8 +66,6 @@ def send_money(request):
             subtraction_amount = amount
             addition_amount = amount
             transaction_currency = str(form.cleaned_data['amount'].currency)
-            print(amount, type(amount))
-            print(transaction_currency, type(transaction_currency))
 
             if transaction_currency != from_person.balance_currency:
                 subtraction_amount = \
@@ -108,21 +104,27 @@ def send_money(request):
 @login_required(login_url='/login/')
 @requires_csrf_token
 def request_money(request):
-    form = RequestForm(initial={'by_user': get_current_person(request)})
+    by_person = get_current_person(request)
+    form = RequestForm(initial={
+        'by_person': by_person,
+        'amount_currency': by_person.balance.currency
+    })
     if request.method == 'POST':
         form = RequestForm(request.POST)
         if form.is_valid():
             form.clean()
 
-            if not form.cleaned_data['by_person'].active:
+            if not by_person.active:
                 messages.error(request, 'Your account is not active.')
                 return render(request, 'payapp/request.html', {'form': form})
             elif not form.cleaned_data['to_person'].active:
                 messages.error(request, 'Requested account is not active.')
                 return render(request, 'payapp/request.html', {'form': form})
 
+            form.instance.by_person = by_person
+            form.instance.status = Request.StatusChoices.PENDING
             form.save()
-            return redirect('home')  # redirect to same page to avoid replay attacks
+            return redirect('home')  # redirect to homepage to avoid replay attacks
 
     return render(request, 'payapp/request.html', {'form': form})
 
@@ -132,7 +134,68 @@ def request_response(request):
     # todo: have this process one of two possible request responses from the homepage
     # refuse (cancel), accept (completed)
     if request.method == 'POST':
-        print(vars(request))
+        response = True if request.POST.get('Accept', '') == 'Accept' else False  # True = Accepted, False = Refused
+
+        by_person_id = request.POST.get('by_person_id')
+        to_person_id = request.POST.get('to_person_id')
+        currency = request.POST.get('currency')
+        amount_object = Money(Decimal(request.POST.get('amount')), currency=currency)
+        status = request.POST.get('status')
+
+        target_request = Request.objects.get(
+            by_person_id=by_person_id,
+            to_person_id=to_person_id,
+            amount=amount_object,
+            status__=status
+        )[0]
+        print(by_person_id)
+
+        if target_request:  # if exists
+            with transaction.atomic:
+                by_person = Person.objects.get(id=by_person_id)[0]
+                to_person = Person.objects.get(id=to_person_id)[0]
+
+                if not by_person.active:
+                    messages.error(request, 'Sender account is not active')
+                    return redirect('home')
+                elif not to_person.active:
+                    messages.error(request, 'Recipient account not active')
+                    return redirect('home')
+
+                if response:  # accepted
+                    amount = Decimal(amount_object.amount)
+
+                    subtraction_amount = amount
+                    addition_amount = amount
+                    transaction_currency = str(amount_object.currency)
+
+                    if transaction_currency != by_person.balance_currency:
+                        subtraction_amount = \
+                            call_currency_converter(transaction_currency, by_person.balance_currency, subtraction_amount)[1]
+
+                    if transaction_currency != to_person.balance_currency:
+                        addition_amount = \
+                            call_currency_converter(transaction_currency, to_person.balance_currency, subtraction_amount)[1]
+
+                    if by_person.balance.amount >= subtraction_amount:  # perform transaction:
+                        # subtract 'from' user balance (with converting currency if needed) and save
+                        by_person.balance -= Money(subtraction_amount, by_person.balance.currency)
+                        by_person.save()
+
+                        # add to 'to' user balance (with converted currency) and save
+                        to_person.balance += Money(addition_amount, to_person.balance.currency)
+                        to_person.save()
+
+                        target_request.status = Request.StatusChoices.COMPLETED
+
+                        messages.success(request, f'Payment Successful: you have sent {amount} to {by_person.user.username}')
+                        return redirect('home')
+                    else:
+                        messages.error(request, "Insufficient funds for transaction")
+                else:
+                    target_request.status = Request.StatusChoices.CANCELLED
+                    target_request.save()
+                    messages.success(request, 'Request Denied Successfully.')
 
     return redirect('home')
 

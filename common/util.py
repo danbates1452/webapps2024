@@ -5,7 +5,7 @@ from payapp.models import Person
 
 
 def get_current_person(request):
-    return Person.objects.filter(user__exact=request.user.id)
+    return Person.objects.filter(user__exact=request.user.id)[0]
 
 
 def admin_area(check_user):

@@ -15,4 +15,9 @@ class SendForm(forms.ModelForm):
 class RequestForm(forms.ModelForm):
     class Meta:
         model = Request
-        exclude = ('by_person', 'completed', 'cancelled')
+        exclude = ('by_person', 'status')
+        labels = {
+            'to_person': 'Recipient'
+        }
+
+
