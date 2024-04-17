@@ -10,7 +10,7 @@ from djmoney.money import Money
 
 from .forms import SendForm, RequestForm, RequestResponseForm
 from .models import Person, Transaction, Request
-from common.util import call_currency_converter, get_current_person, admin_area, do_payment
+from common.util import call_currency_converter, get_current_person, admin_area, do_payment, call_timestamp_service
 
 
 @login_required(login_url='/login/')
@@ -62,6 +62,7 @@ def send_money(request):
                                 recipient=to_person,
                                 amount=amount)
             if result:  # if success
+                form.instance.submission_datetime = call_timestamp_service()
                 form.save()
                 return redirect('home')
             else:
@@ -132,7 +133,7 @@ def request_response(request):
                         from_person=to_person,
                         to_person=by_person,
                         amount=amount,
-                        submission_datetime=datetime.now()
+                        submission_datetime=call_timestamp_service()
                     )
 
             elif form.cleaned_data['status'] == Request.StatusChoices.CANCELLED:

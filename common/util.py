@@ -21,19 +21,28 @@ def admin_area(check_user):
         return redirect('home')
 
 
-CURRENCY_CONVERTER_API_URI = 'https://' + Site.objects.get_current().domain + '/conversion'
+SITE_URI = 'https://' + Site.objects.get_current().domain
+CURRENCY_CONVERTER_API_URI = SITE_URI + '/conversion'
+TIMESTAMP_SERVICE_API_URI = SITE_URI + '/timestamp'
+
+
+def call_api(uri, verify_certificate=False):
+    # SSL certificate checking is disabled as ours is self-signed and will cause an error
+    response = requests.get(uri, verify=False)
+    return response.json()
 
 
 def call_currency_converter(currency_from, currency_to, amount_from):
     request_uri = '/'.join([CURRENCY_CONVERTER_API_URI, currency_from, currency_to, str(amount_from)])
 
-    response = requests.get(request_uri, verify=False)
-    # SSL certificate checking is disabled as ours is self-signed and will cause an error
-
-    json_response = response.json()
+    json_response = call_api(request_uri)
     rate = json_response[0]
     amount_to = json_response[1]
     return rate, amount_to
+
+
+def call_timestamp_service():
+    return call_api(TIMESTAMP_SERVICE_API_URI)[0]
 
 
 def unpack_form_errors(errors):

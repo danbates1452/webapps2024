@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'djmoney',
     'djmoney.contrib.exchange',
     'payapp.apps.PayappConfig',
-    'timestampapp.apps.TimestampAppConfig',
 ]
 
 MIDDLEWARE = [
@@ -149,5 +148,3 @@ CURRENCY_CHOICES = [('GBP', 'GBP £'), ('USD', 'USD $'), ('EUR', 'EUR €')]
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 10 * 60
-
-TIMESTAMP_SERVICE_PORT = 10000
