@@ -1,0 +1,1 @@
+thrift-0.19.0.exe -r --gen py timestamper.thrift
