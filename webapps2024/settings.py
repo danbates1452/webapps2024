@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'djmoney',
     'djmoney.contrib.exchange',
     'payapp.apps.PayappConfig',
+    'timestampapp.apps.TimestampAppConfig',
 ]
 
 MIDDLEWARE = [
