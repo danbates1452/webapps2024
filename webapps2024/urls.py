@@ -18,4 +18,5 @@ urlpatterns = [
     path('login/', register_views.login_user, name='login'),
     path('logout/', register_views.logout_user, name='logout'),
     path('conversion/', include('conversion.urls')),
+    path('timestamp/', include('timestampapp.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
