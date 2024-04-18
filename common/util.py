@@ -1,11 +1,12 @@
 from decimal import Decimal
-
 import requests
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.sites.models import Site
 from django.db import transaction
 from django.shortcuts import redirect
 from djmoney.money import Money
+from requests.adapters import HTTPAdapter, Retry
 
 from payapp.models import Person
 
@@ -24,11 +25,17 @@ def admin_area(check_user):
 SITE_URI = 'https://' + Site.objects.get_current().domain
 CURRENCY_CONVERTER_API_URI = SITE_URI + '/conversion'
 TIMESTAMP_SERVICE_API_URI = SITE_URI + '/timestamp'
+retry_strategy = Retry(total=settings.LOCAL_API_RETRY_MAX_RETRIES,
+                       backoff_factor=settings.LOCAL_API_RETRY_BACKOFF_FACTOR,
+                       status_forcelist=settings.LOCAL_API_RETRY_STATUS_FORCELIST
+                       )
 
 
 def call_api(uri, verify_certificate=False):
     # SSL certificate checking is disabled as ours is self-signed and will cause an error
-    response = requests.get(uri, verify=False)
+    session = requests.Session()
+    session.mount('https://', HTTPAdapter(max_retries=retry_strategy))
+    response = session.get(uri, verify=verify_certificate)
     return response.json()
 
 
