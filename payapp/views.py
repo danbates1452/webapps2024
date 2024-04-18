@@ -15,6 +15,7 @@ from .models import Person, Transaction, Request
 from common.util import call_currency_converter, get_current_person, admin_area, do_payment, call_timestamp_service
 
 
+@requires_csrf_token
 @login_required(login_url='/login/')
 def home(request):
     requests = Request.objects.filter(

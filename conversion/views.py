@@ -57,4 +57,4 @@ def convert(request, currency1, currency2, amount_of_currency1):
         messages.add_message(request, messages.ERROR, error)
         print(error)  # todo: remove in submission
         serialized_error = serializers.serialize("json", error)
-        return Response(data=serialized_error)
+        return Response(data=serialized_error, status=422)

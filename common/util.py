@@ -16,7 +16,7 @@ def get_current_person(request):
 
 
 def admin_area(check_user):
-    if check_user.is_staff:
+    if check_user.is_staff and check_user.is_superuser:
         return True
     else:
         return redirect('home')
