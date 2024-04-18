@@ -41,7 +41,7 @@
                         <a class="nav-link" href="#">Nav Item</a>
                     </li>
                     -->
-                    {% if user.is_staff %}
+                    {% if user.is_superuser %}
                         <li>
                             <a class="nav-link font-weight-bold" href="/admin-activity">User Transactions</a>
                         </li>

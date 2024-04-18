@@ -49,7 +49,7 @@ def call_currency_converter(currency_from, currency_to, amount_from):
 
 
 def call_timestamp_service():
-    return call_api(TIMESTAMP_SERVICE_API_URI)[0]
+    return str(call_api(TIMESTAMP_SERVICE_API_URI))
 
 
 def unpack_form_errors(errors):

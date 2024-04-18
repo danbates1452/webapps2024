@@ -13,6 +13,7 @@
             <td>Username</td>
             <td>Balance</td>
             <td>Status</td>
+            <td>Admin</td>
         </tr>
         </thead>
         <tbody>
@@ -23,11 +24,15 @@
             <td>{{ person.balance }}</td>
             <td>{% if person.active %} Active {% else %} Inactive {% endif %}</td>
             <td>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" value="{{ person.user.id }}" name="user_id">
-                    <input type="submit" class="btn btn-danger" value="Make Admin">
-                </form>
+                {% if person.user.is_superuser and person.user.is_staff %}
+                    Administrator
+                {% else %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{ person.user.id }}" name="user_id">
+                        <input type="submit" class="btn btn-danger" value="Make Admin">
+                    </form>
+                {% endif %}
             </td>
             </tr>
         {% endfor %}

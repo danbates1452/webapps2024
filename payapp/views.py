@@ -1,6 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
-
+from django.contrib.auth.models import User
 from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
@@ -65,6 +65,7 @@ def send_money(request):
                                 amount=amount)
             if result:  # if success
                 form.instance.submission_datetime = call_timestamp_service()
+                form.instance.from_person = from_person
                 form.save()
                 return redirect('home')
             else:
@@ -165,12 +166,13 @@ def admin_users(request):
 
     if request.method == 'POST':
         if request.POST['user_id']:
-            user_model = settings.AUTH_USER_MODEL
-            user_to_promote = user_model.objects.get(id=int(request.POST['user_id']))
+            user_to_promote = User.objects.get(id=int(request.POST['user_id']))
 
             if get_current_person(request).user.is_superuser:  # if current user is admin
                 user_to_promote.is_superuser = True
+                user_to_promote.is_staff = True
                 user_to_promote.save()
+                messages.success(request, 'Admin ' + user_to_promote.username + ' successfully promoted.')
             else:
                 messages.error(request, 'You do not have permission to do this.')
         else:
