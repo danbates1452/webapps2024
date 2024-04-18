@@ -1,5 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
+
+from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q
@@ -156,15 +158,30 @@ def request_response(request):
     return redirect('home')
 
 
+@requires_csrf_token
 @login_required(login_url='/login/')
 def admin_users(request):
     admin_area(request.user)
 
-    context = {
-        'people': Person.objects.all()
-    }
+    if request.method == 'POST':
+        if request.POST['user_id']:
+            user_model = settings.AUTH_USER_MODEL
+            user_to_promote = user_model.objects.get(id=int(request.POST['user_id']))
 
-    return render(request, 'payapp/admin_users.html', context=context)
+            if get_current_person(request).user.is_superuser:  # if current user is admin
+                user_to_promote.is_superuser = True
+                user_to_promote.save()
+            else:
+                messages.error(request, 'You do not have permission to do this.')
+        else:
+            messages.error(request, 'Invalid user selected.')
+
+        return redirect('admin_users')  # prevent form resubmission
+    else:
+        context = {
+            'people': Person.objects.all()
+        }
+        return render(request, 'payapp/admin_users.html', context=context)
 
 
 @login_required(login_url='/login/')
