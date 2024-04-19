@@ -20,7 +20,7 @@ from common.util import call_currency_converter, get_current_person, admin_area,
 def home(request):
     requests = Request.objects.filter(
         (Q(to_person__user_id__exact=request.user.id) | Q(from_person__user_id__exact=request.user.id)) and
-        Q(status=Request.StatusChoices.PENDING)
+        Q(status="PENDING")
     )
 
     forms = [RequestResponseForm(instance=rq) for rq in requests]
@@ -98,7 +98,7 @@ def request_money(request):
                 return render(request, 'payapp/request.html', {'form': form})
 
             form.instance.by_person = by_person
-            form.instance.status = Request.StatusChoices.PENDING
+            form.instance.status = "PENDING"
             form.save()
             return redirect('home')  # redirect to homepage to avoid replay attacks
 
@@ -111,9 +111,9 @@ def request_response(request):
         form = RequestResponseForm(request.POST)
         if form.is_valid():
             form.clean()
-            if form.cleaned_data['status'] == Request.StatusChoices.PENDING:
+            if form.cleaned_data['status'] == "PENDING":
                 messages.error(request, 'Payment request was already pending')
-            elif form.cleaned_data['status'] == Request.StatusChoices.COMPLETED:
+            elif form.cleaned_data['status'] == "COMPLETED":
                 by_person = form.cleaned_data['by_person']
                 to_person = form.cleaned_data['to_person']
                 amount = form.cleaned_data['amount']
@@ -127,7 +127,7 @@ def request_response(request):
                     request_instance = Request.objects.get(by_person__exact=by_person,
                                                            to_person__exact=to_person,
                                                            amount__exact=amount,
-                                                           status__exact=Request.StatusChoices.PENDING)
+                                                           status__exact="PENDING")
                     # make sure we update rather than create
                     form = RequestResponseForm(request.POST, instance=request_instance)
                     form.save()
@@ -140,12 +140,12 @@ def request_response(request):
                         submission_datetime=call_timestamp_service()
                     )
 
-            elif form.cleaned_data['status'] == Request.StatusChoices.CANCELLED:
+            elif form.cleaned_data['status'] == "CANCELLED":
                 print(form.cleaned_data)
                 request_instance = Request.objects.get(by_person__exact=form.cleaned_data['by_person'],
                                                        to_person__exact=form.cleaned_data['to_person'],
                                                        amount__exact=form.cleaned_data['amount'],
-                                                       status__exact=Request.StatusChoices.PENDING)
+                                                       status__exact="PENDING")
                 # make sure we update rather than create
                 form = RequestResponseForm(request.POST, instance=request_instance)
                 form.save()

@@ -56,12 +56,12 @@ class Request(models.Model):
     to_person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='requests_to')
     amount = PayAppMoneyField()
 
-    class StatusChoices(models.TextChoices):
-        PENDING = "PENDING"
-        COMPLETED = "COMPLETED"
-        CANCELLED = "CANCELLED"
-
-    status = models.CharField(choices=StatusChoices, default=StatusChoices.PENDING, max_length=9)
+    StatusChoices = (
+        ("PENDING", 'Pending'),
+        ("COMPLETED", 'Completed'),
+        ("CANCELLED", 'Cancelled'),
+    )
+    status = models.CharField(choices=StatusChoices, default="PENDING", max_length=9)
 
     def __str__(self):
         return ' '.join([self.by_person.user.__str__(),
