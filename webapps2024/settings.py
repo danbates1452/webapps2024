@@ -25,9 +25,9 @@ SECRET_KEY = 'django-insecure-1rwmn@23)19@tu+c30p!w1yzy2-d_k%=l(7n29dh+f(0-6qv%l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.45', '.danbat.es', '*.amazonaws.com']
-from socket import gethostbyname, gethostname
-ALLOWED_HOSTS.append(gethostbyname(gethostname()))
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.45', '.danbat.es', 'ec2-18-205-116-238.compute-1.amazonaws.com', '18.205.116.238']
+#from socket import gethostbyname, gethostname
+#ALLOWED_HOSTS.append(gethostbyname(gethostname()))
 
 # Application definition
 
