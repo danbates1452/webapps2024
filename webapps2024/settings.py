@@ -23,11 +23,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1rwmn@23)19@tu+c30p!w1yzy2-d_k%=l(7n29dh+f(0-6qv%l'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.45', '.danbat.es', 'ec2-18-205-116-238.compute-1.amazonaws.com', '18.205.116.238']
-#from socket import gethostbyname, gethostname
-#ALLOWED_HOSTS.append(gethostbyname(gethostname()))
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.45', '.danbat.es']
+
+import requests
+url = "http://169.254.169.254/latest/meta-data/public-ipv4"
+try:
+    r = requests.get(url)
+    instance_ip = r.text
+    ALLOWED_HOSTS += [instance_ip]
+except ConnectionError:
+    error_msg = "You can only run production settings on an AWS EC2 instance"
+    print(error_msg)
+
 
 # Application definition
 
