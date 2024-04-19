@@ -33,6 +33,7 @@ try:
     r = requests.get(url)
     instance_ip = r.text
     ALLOWED_HOSTS += [instance_ip]
+    print(ALLOWED_HOSTS)
 except ConnectionError:
     error_msg = "You can only run production settings on an AWS EC2 instance"
     print(error_msg)
