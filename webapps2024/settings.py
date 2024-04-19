@@ -25,19 +25,10 @@ SECRET_KEY = 'django-insecure-1rwmn@23)19@tu+c30p!w1yzy2-d_k%=l(7n29dh+f(0-6qv%l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.45', '.danbat.es']
-
-import requests
-url = "http://169.254.169.254/latest/meta-data/public-ipv4"
-try:
-    r = requests.get(url)
-    instance_ip = r.text
-    ALLOWED_HOSTS += [instance_ip]
-    print(ALLOWED_HOSTS)
-except ConnectionError:
-    error_msg = "You can only run production settings on an AWS EC2 instance"
-    print(error_msg)
-
+# Remember to always add the new public IPv4 Address your EC2 Instance gets assigned here!
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.45', '.danbat.es',
+                 '<EC2-INSTANCE-PUBLIC-IPV4-ADDRESS>'
+                 ]
 
 # Application definition
 
