@@ -55,8 +55,12 @@
                                     <form action="/request-response/" method="POST">
                                         <script id="workaround-for-djmoney-bug">
                                             setTimeout(function(){
-                                                document.getElementById("div_id_amount").style.display="none"
+                                                document.querySelectorAll('[id=div_id_amount]').forEach(setDisplayNone)
                                             }, 0);
+                                            
+                                            function setDisplayNone(element) {
+                                                element.style.display = "none";
+                                            }
                                         </script>
                                         {% csrf_token %}
                                         {{ form|crispy }}
