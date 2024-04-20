@@ -179,7 +179,7 @@ def admin_users(request):
         else:
             messages.error(request, 'Invalid user selected.')
 
-        return redirect('admin_users')  # prevent form resubmission
+        return redirect('admin-users')  # prevent form resubmission
     else:
         context = {
             'people': Person.objects.all()
