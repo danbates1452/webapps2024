@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'djmoney',
-    'djmoney.contrib.exchange',
     'payapp.apps.PayappConfig',
 ]
 
